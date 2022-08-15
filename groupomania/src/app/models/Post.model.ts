@@ -8,4 +8,5 @@ export class Post {
   dislikes!: number;
   usersLiked!: string[];
   usersDisliked!: string[];
+  date!: Date;
 }
