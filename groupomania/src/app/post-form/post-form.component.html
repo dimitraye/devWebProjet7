@@ -1,1 +1,17 @@
-<p>post-form works!</p>
+<span *ngIf="loading"></span>
+<form [formGroup]="postForm" *ngIf="!loading">
+  <div class="form-group">
+    <label for="title">Titre</label>
+    <input type="text" class="form-control" id="title" formControlName="title">
+  </div>
+  <div class="form-group">
+    <label for="content">Contenu</label>
+    <textarea class="form-control" id="content" rows="5" formControlName="content"></textarea>
+  </div>
+  <div class="form-group">
+    <input type="file" accept="image/*" #imageInput (change)="onFileAdded($event)">
+    <button mat-raised-button color="primary" (click)="imageInput.click()">Ajouter une image</button>
+    <img [src]="imagePreview" *ngIf="imagePreview" style="max-height: 100px;display:block;margin-top:10px">
+  </div>
+  <button mat-raised-button color="primary" (click)="onSubmit()" [disabled]="postForm.invalid">PUBLIER</button>
+</form>
