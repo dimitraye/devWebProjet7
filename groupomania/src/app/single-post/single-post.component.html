@@ -1,1 +1,27 @@
-<p>single-post works!</p>
+<span *ngIf="loading"></span>
+<div class="post-container" *ngIf="post$ | async as post">
+  <img [src]="post?.imageUrl" alt="">
+  <div class="post-info">
+    <h1 class="post-title">{{ post?.title }}</h1>
+    <h3>Contenu</h3>
+    <p>{{ post.content }}</p>
+    <div class="like-buttons" *ngIf="!likePending">
+      <div class="likes">
+        <i [ngClass]="{ 'fas liked': liked, 'far': !liked, 'disabled': disliked }" class="like fa-thumbs-up fa-lg" (click)="onLike()"></i>
+        <span>{{ post.likes }}</span>
+      </div>
+      <div class="dislikes">
+        <i [ngClass]="{ 'fas disliked': disliked, 'far': !disliked, 'disabled': liked }" class="dislike fa-thumbs-down fa-lg" (click)="onDislike()"></i>
+        <span>{{ post.dislikes }}</span>
+      </div>
+    </div>
+    <div class="like-pending" *ngIf="likePending">
+      <span class="white-spinner"></span>
+    </div>
+    <div class="control-buttons">
+      <button mat-raised-button (click)="onBack()">RETOUR</button>
+      <button mat-raised-button color="primary" (click)="onModify()" *ngIf="userId === post.userId">MODIFIER</button>
+      <button mat-raised-button color="warn" (click)="onDelete()" *ngIf="userId === post.userId">SUPPRIMER</button>
+    </div>
+  </div>
+</div>
