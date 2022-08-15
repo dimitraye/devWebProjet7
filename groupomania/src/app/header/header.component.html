@@ -1,1 +1,49 @@
-<p>header works!</p>
+<nav>
+    <div class="left-nav">
+      <ul>
+        <li>
+          <a routercaLink="posts" routerLinkActive="active" *ngIf="isAuth$ | async">
+            Tous les Posts
+          </a>
+        </li>
+        <li>
+          <a routerLink="new-post" routerLinkActive="active" *ngIf="isAuth$ | async">
+            Nouveau Post
+          </a>
+        </li>
+      </ul>
+    </div>
+    <div class="logo">
+      <div class="logo-image">
+        <img alt="Logo Groupomania" src="../../assets/images/icon-left-font.png">
+      </div>
+      <div class="logo-text">
+        <h1>
+          GROUPOMANIA
+        </h1>
+        <h5>
+          LE RESEAU SOCIAL PREFERE DES ENTREPRISES
+        </h5>
+      </div>
+    </div>
+    <div class="right-nav">
+      <ul>
+        <li>
+          <a routerLink="signup" routerLinkActive="active" *ngIf="!(isAuth$ | async)">
+            INSCRIPTION
+          </a>
+        </li>
+        <li>
+          <a routerLink="login" routerLinkActive="active" *ngIf="!(isAuth$ | async)">
+            CONNEXION
+          </a>
+        </li>
+        <li>
+          <a (click)="onLogout()" *ngIf="isAuth$ | async">
+            DECONNEXION
+          </a>
+        </li>
+      </ul>
+    </div>
+  </nav>
+  
