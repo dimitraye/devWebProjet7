@@ -36,6 +36,7 @@ export class SinglePostComponent implements OnInit {
     private posts: PostsService,
     private route: ActivatedRoute,
     private auth: AuthService,
+    
     private router: Router
   ) {}
 
