@@ -29,7 +29,9 @@ export class SinglePostComponent implements OnInit {
   disliked!: boolean;
   errorMessage!: string;
   isAdmin$!: Observable<Boolean>;
-  userId$!: Observable<string>;
+  isAdmin!: boolean;
+  role!: string;
+  decodedToken!:{};
   constructor(
     private posts: PostsService,
     private route: ActivatedRoute,
@@ -40,6 +42,11 @@ export class SinglePostComponent implements OnInit {
   ngOnInit() {
     this.loading = true;
     this.userId = this.auth.getUserId();
+    this.role = this.auth.getLocalUserRole();
+    this.isAdmin = this.auth.getLocalUserRole() == 'admin';
+    let token:string | null = this.auth.getToken();
+    this.decodedToken = this.auth.getDecodedAccessToken(token);
+    console.log('decodedToken',this.decodedToken);
     this.post$ = this.route.params.pipe(
       map((params) => params['id']),
       switchMap((id) => this.posts.getPostById(id)),
@@ -54,7 +61,6 @@ export class SinglePostComponent implements OnInit {
     );
     this.isAdmin$ = this.auth.isAdmin$.pipe(shareReplay(1));
     
-    this.userId$ = this.auth.userId$.pipe(shareReplay(1));
 
   }
 

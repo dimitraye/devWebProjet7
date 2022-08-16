@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject, Observable, tap } from 'rxjs';
 import { Router } from '@angular/router';
+import jwt_decode from 'jwt-decode';
 
 @Injectable({
   providedIn: 'root',
@@ -9,7 +10,6 @@ import { Router } from '@angular/router';
 export class AuthService {
   isAuth$ = new BehaviorSubject<boolean>(false);
   isAdmin$ = new BehaviorSubject<boolean>(false);
-  userId$ = new BehaviorSubject<string>('');
   private authToken = '';
   private userId = '';
   userRole = '';
@@ -25,35 +25,55 @@ export class AuthService {
 
   getToken() {
     let token = this.authToken || this.getLocalToken();
-    //let token = this.getLocalToken;
-    return token;
+    return token? token:'' ;
   }
 
   getLocalToken() {
     return localStorage.getItem('token');
   }
+  //décode le token
+  getDecodedAccessToken(token: string): any {
+    try {
+      return jwt_decode(token);
+    } catch (Error) {
+      return null;
+    }
+  }
+
+  //
+  getLocalUserId() {
+    let token:string | any = this.getLocalToken();
+    let tokenInfo = this.getDecodedAccessToken(token);
+    console.log('this.userId',this.userId);
+    console.log('tokenInfo.userId',tokenInfo.userId);
+    return tokenInfo != null ? tokenInfo.userId : '';
+  }
+
+  getLocalUserRole() {
+    let token:string | any = this.getLocalToken();
+    let tokenInfo = this.getDecodedAccessToken(token);
+    console.log('this.userRole getLocalUserRole',this.userRole);
+    console.log('tokenInfo.userRole getLocalUserRole',tokenInfo.role);
+    return tokenInfo != null ? tokenInfo.role : '';
+  }
 
   getUserId() {
-    return this.userId;
+    return this.userId || this.getLocalUserId();
   }
 
   isAdmin() {
     return this.userRole == 'admin';
   }
-  
 
   public isLoggedIn(): Observable<boolean> {
     if (localStorage.getItem('isLoggedIn') == 'true') {
       this.isAuth$.next(true);
-      this.userId$.next(this.userId);
     } else {
       this.isAuth$.next(false);
     }
     console.log('isLoggedIn');
     return this.isAuth$;
   }
-
-  
 
   loginUser(email: string, password: string) {
     return this.http
@@ -68,7 +88,6 @@ export class AuthService {
           this.userRole = role;
           this.isAuth$.next(true);
           this.isAdmin$.next(this.userRole == 'admin');
-          this.userId$.next(userId);
           localStorage.setItem('isLoggedIn', 'true');
           localStorage.setItem('token', token);
         })
@@ -79,10 +98,17 @@ export class AuthService {
     this.authToken = '';
     this.userId = '';
     this.isAuth$.next(false);
-    localStorage.setItem('isLoggedIn','false');    
-    localStorage.removeItem('token');  
-    console.log("localstorage removed");
+    localStorage.setItem('isLoggedIn', 'false');
+    localStorage.removeItem('token');
+    console.log('localstorage removed');
     this.router.navigate(['login']);
-    
   }
 }
+
+
+
+
+
+
+
+
