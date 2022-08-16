@@ -23,6 +23,14 @@
       <button mat-raised-button (click)="onBack()">RETOUR</button>
       <button mat-raised-button color="primary" (click)="onModify()" *ngIf="(userId === post.userId ) || (isAdmin$ | async)">MODIFIER</button>
       <button mat-raised-button color="warn" (click)="onDelete()" *ngIf="(userId === post.userId) || (isAdmin$ | async)">SUPPRIMER</button>
+      <p>userId : {{userId }}</p>
+      <p>userId$ : {{userId$ | async}}</p>
+      <p>post.userId : {{post.userId }}</p>
+      <p>(userId === post.userId ) : {{(userId === post.userId ) }}</p>
+      <p>(isAdmin$ | async) : {{(isAdmin$ | async) }}</p>
     </div>
   </div>
 </div>
+
+
+

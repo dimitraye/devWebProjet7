@@ -9,6 +9,7 @@ import { Router } from '@angular/router';
 export class AuthService {
   isAuth$ = new BehaviorSubject<boolean>(false);
   isAdmin$ = new BehaviorSubject<boolean>(false);
+  userId$ = new BehaviorSubject<string>('');
   private authToken = '';
   private userId = '';
   userRole = '';
@@ -39,13 +40,16 @@ export class AuthService {
   isAdmin() {
     return this.userRole == 'admin';
   }
+  
 
   public isLoggedIn(): Observable<boolean> {
     if (localStorage.getItem('isLoggedIn') == 'true') {
       this.isAuth$.next(true);
+      this.userId$.next(this.userId);
     } else {
       this.isAuth$.next(false);
     }
+    console.log('isLoggedIn');
     return this.isAuth$;
   }
 
@@ -64,6 +68,7 @@ export class AuthService {
           this.userRole = role;
           this.isAuth$.next(true);
           this.isAdmin$.next(this.userRole == 'admin');
+          this.userId$.next(userId);
           localStorage.setItem('isLoggedIn', 'true');
           localStorage.setItem('token', token);
         })
