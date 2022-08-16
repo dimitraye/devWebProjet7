@@ -21,8 +21,8 @@
     </div>
     <div class="control-buttons">
       <button mat-raised-button (click)="onBack()">RETOUR</button>
-      <button mat-raised-button color="primary" (click)="onModify()" *ngIf="userId === post.userId">MODIFIER</button>
-      <button mat-raised-button color="warn" (click)="onDelete()" *ngIf="userId === post.userId">SUPPRIMER</button>
+      <button mat-raised-button color="primary" (click)="onModify()" *ngIf="(userId === post.userId ) || (isAdmin$ | async)">MODIFIER</button>
+      <button mat-raised-button color="warn" (click)="onDelete()" *ngIf="(userId === post.userId) || (isAdmin$ | async)">SUPPRIMER</button>
     </div>
   </div>
 </div>
