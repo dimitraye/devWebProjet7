@@ -3,7 +3,7 @@ import { Post } from '../models/Post.model';
 import { PostsService } from '../services/posts.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { AuthService } from '../services/auth.service';
-import { catchError, EMPTY, map, Observable, of, switchMap, take, tap } from 'rxjs';
+import { catchError, EMPTY, map, Observable, of, shareReplay, switchMap, take, tap } from 'rxjs';
 
 @Component({
   selector: 'app-single-post',
@@ -19,7 +19,7 @@ export class SinglePostComponent implements OnInit {
   liked!: boolean;
   disliked!: boolean;
   errorMessage!: string;
-
+  isAdmin$!: Observable<Boolean>;
   constructor(private posts: PostsService,
     private route: ActivatedRoute,
     private auth: AuthService,
@@ -41,6 +41,7 @@ export class SinglePostComponent implements OnInit {
         }
       })
     );
+    this.isAdmin$ = this.auth.isAdmin$.pipe(shareReplay(1));
   }
 
   onLike() {
@@ -108,4 +109,6 @@ export class SinglePostComponent implements OnInit {
       })
     ).subscribe();
   }
+
+
 }
