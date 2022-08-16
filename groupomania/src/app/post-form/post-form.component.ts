@@ -19,6 +19,7 @@ export class PostFormComponent implements OnInit {
   post!: Post;
   errorMsg!: string;
   imagePreview!: string;
+  cardTitle!: string;
 
   constructor(private formBuilder: FormBuilder,
               private route: ActivatedRoute,
@@ -57,6 +58,7 @@ export class PostFormComponent implements OnInit {
       content: [null, Validators.required],
       image: [null, Validators.required]
     });
+    this.cardTitle = 'Nouveau Post';
   }
 
   initModifyForm(post: Post) {
@@ -66,6 +68,7 @@ export class PostFormComponent implements OnInit {
       image: [post.imageUrl, Validators.required]
     });
     this.imagePreview = this.post.imageUrl;
+    this.cardTitle = 'Modifier Post';
   }
 
   onSubmit() {
