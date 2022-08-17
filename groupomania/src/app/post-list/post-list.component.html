@@ -10,7 +10,7 @@
   <div class="" *ngIf="!loading && posts.length > 0">
     <div
       class="card"
-      style="width: 70%"
+      
       *ngFor="let post of posts"
       (click)="onClickPost(post._id)"
     >
@@ -33,7 +33,7 @@
         class="card-img-bottom"
         [src]="post.imageUrl"
         alt="image post"
-        style="width: 100%"
+        
       />
 
       <div class="card-footer">

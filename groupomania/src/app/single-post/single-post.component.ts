@@ -35,18 +35,18 @@ export class SinglePostComponent implements OnInit {
   constructor(
     private posts: PostsService,
     private route: ActivatedRoute,
-    private auth: AuthService,
+    private authService: AuthService,
     
     private router: Router
   ) {}
 
   ngOnInit() {
     this.loading = true;
-    this.userId = this.auth.getUserId();
-    this.role = this.auth.getLocalUserRole();
-    this.isAdmin = this.auth.getLocalUserRole() == 'admin';
-    let token:string | null = this.auth.getToken();
-    this.decodedToken = this.auth.getDecodedAccessToken(token);
+    this.userId = this.authService.getUserId();
+    this.role = this.authService.getLocalUserRole();
+    this.isAdmin = this.authService.getLocalUserRole() == 'admin';
+    let token:string | null = this.authService.getToken();
+    this.decodedToken = this.authService.getDecodedAccessToken(token);
     console.log('decodedToken',this.decodedToken);
     this.post$ = this.route.params.pipe(
       map((params) => params['id']),
@@ -60,7 +60,7 @@ export class SinglePostComponent implements OnInit {
         }
       })
     );
-    this.isAdmin$ = this.auth.isAdmin$.pipe(shareReplay(1));
+    this.isAdmin$ = this.authService.isAdmin$.pipe(shareReplay(1));
     
 
   }

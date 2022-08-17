@@ -25,7 +25,7 @@ export class PostFormComponent implements OnInit {
               private route: ActivatedRoute,
               private router: Router,
               private posts: PostsService,
-              private auth: AuthService) { }
+              private authService: AuthService) { }
 
   ngOnInit() {
     this.loading = true;
@@ -76,7 +76,7 @@ export class PostFormComponent implements OnInit {
     const newPost = new Post();
     newPost.title = this.postForm.get('title')!.value;
     newPost.content = this.postForm.get('content')!.value;
-    newPost.userId = this.auth.getUserId();
+    newPost.userId = this.authService.getUserId();
     if (this.mode === 'new') {
       this.posts.createPost(newPost, this.postForm.get('image')!.value).pipe(
         tap(({ message }) => {

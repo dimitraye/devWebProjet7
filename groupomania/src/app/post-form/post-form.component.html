@@ -19,7 +19,7 @@
       <input type="file" accept="image/*" #imageInput (change)="onFileAdded($event)" class="form-control" >
       <label class="input-group-text"   (click)="imageInput.click()">Ajouter image</label>
       <div class="col-12">
-      <img [src]="imagePreview" *ngIf="imagePreview" style="max-height: 100px;display:block;margin-top:10px">
+      <img [src]="imagePreview" *ngIf="imagePreview" >
     </div>
     </div>
 
