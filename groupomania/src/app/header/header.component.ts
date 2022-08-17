@@ -11,16 +11,16 @@ export class HeaderComponent implements OnInit {
 
   isAuth$!: Observable<boolean>;
 
-  constructor(private auth: AuthService) { }
+  constructor(private authService: AuthService) { }
 
   ngOnInit() {
-    this.isAuth$ = this.auth.isAuth$.pipe(
+    this.isAuth$ = this.authService.isAuth$.pipe(
       shareReplay(1)
     );
   }
 
   onLogout() {
-    this.auth.logout();
+    this.authService.logout();
   }
 
 }

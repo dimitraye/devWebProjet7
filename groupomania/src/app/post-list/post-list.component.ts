@@ -17,7 +17,7 @@ export class PostListComponent implements OnInit {
   errorMsg!: string;
   userId!: string;
   isAdmin!: boolean;
-  constructor(private post: PostsService,
+  constructor(private postService: PostsService,
               private router: Router,
               private authService: AuthService
               ) { }
@@ -27,7 +27,7 @@ export class PostListComponent implements OnInit {
     this.userId = this.authService.getUserId();
     this.isAdmin = this.authService.getLocalUserRole() == 'admin';
 
-    this.posts$ = this.post.posts$.pipe(
+    this.posts$ = this.postService.posts$.pipe(
       tap(() => {
         this.loading = false;
         this.errorMsg = '';
@@ -38,7 +38,7 @@ export class PostListComponent implements OnInit {
         return of([]);
       })
     );
-    this.post.getPosts();
+    this.postService.getPosts();
   }
 
   onClickPost(id: string) {
@@ -51,7 +51,7 @@ export class PostListComponent implements OnInit {
   
   onDelete(id: any) {
     this.loading = true;
-    this.post.deletePost(id)
+    this.postService.deletePost(id)
     .subscribe(
       response => {
         console.log(response);
@@ -63,6 +63,7 @@ export class PostListComponent implements OnInit {
       });
       this.router.navigate(['/posts']);
 
+      
   }
 }
 

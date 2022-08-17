@@ -12,7 +12,7 @@ export class PostsService {
   posts$ = new Subject<Post[]>();
 
   constructor(private http: HttpClient,
-              private auth: AuthService) {}
+              private authService: AuthService) {}
 
   getPosts() {
     this.http.get<Post[]>('http://localhost:3000/api/posts').pipe(
@@ -33,7 +33,7 @@ export class PostsService {
   likePost(id: string, like: boolean) {
     return this.http.post<{ message: string }>(
       'http://localhost:3000/api/posts/' + id + '/like',
-      { userId: this.auth.getUserId(), like: like ? 1 : 0 }
+      { userId: this.authService.getUserId(), like: like ? 1 : 0 }
     ).pipe(
       mapTo(like),
       catchError(error => throwError(error.error.message))
@@ -43,7 +43,7 @@ export class PostsService {
   dislikePost(id: string, dislike: boolean) {
     return this.http.post<{ message: string }>(
       'http://localhost:3000/api/posts/' + id + '/like',
-      { userId: this.auth.getUserId(), like: dislike ? -1 : 0 }
+      { userId: this.authService.getUserId(), like: dislike ? -1 : 0 }
     ).pipe(
       mapTo(dislike),
       catchError(error => throwError(error.error.message))

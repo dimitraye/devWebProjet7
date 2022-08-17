@@ -24,7 +24,7 @@ export class PostFormComponent implements OnInit {
   constructor(private formBuilder: FormBuilder,
               private route: ActivatedRoute,
               private router: Router,
-              private posts: PostsService,
+              private postService: PostsService,
               private authService: AuthService) { }
 
   ngOnInit() {
@@ -38,7 +38,7 @@ export class PostFormComponent implements OnInit {
           return EMPTY;
         } else {
           this.mode = 'edit';
-          return this.posts.getPostById(params['id'])
+          return this.postService.getPostById(params['id'])
         }
       }),
       tap(post => {
@@ -78,7 +78,7 @@ export class PostFormComponent implements OnInit {
     newPost.content = this.postForm.get('content')!.value;
     newPost.userId = this.authService.getUserId();
     if (this.mode === 'new') {
-      this.posts.createPost(newPost, this.postForm.get('image')!.value).pipe(
+      this.postService.createPost(newPost, this.postForm.get('image')!.value).pipe(
         tap(({ message }) => {
           console.log(message);
           this.loading = false;
@@ -92,7 +92,7 @@ export class PostFormComponent implements OnInit {
         })
       ).subscribe();
     } else if (this.mode === 'edit') {
-      this.posts.modifyPost(this.post._id, newPost, this.postForm.get('image')!.value).pipe(
+      this.postService.modifyPost(this.post._id, newPost, this.postForm.get('image')!.value).pipe(
         tap(({ message }) => {
           console.log(message);
           this.loading = false;

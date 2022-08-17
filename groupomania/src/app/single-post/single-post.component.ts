@@ -33,7 +33,7 @@ export class SinglePostComponent implements OnInit {
   role!: string;
   decodedToken!:{};
   constructor(
-    private posts: PostsService,
+    private postService: PostsService,
     private route: ActivatedRoute,
     private authService: AuthService,
     
@@ -50,7 +50,7 @@ export class SinglePostComponent implements OnInit {
     console.log('decodedToken',this.decodedToken);
     this.post$ = this.route.params.pipe(
       map((params) => params['id']),
-      switchMap((id) => this.posts.getPostById(id)),
+      switchMap((id) => this.postService.getPostById(id)),
       tap((post) => {
         this.loading = false;
         if (post.usersLiked.find((user) => user === this.userId)) {
@@ -74,7 +74,7 @@ export class SinglePostComponent implements OnInit {
       .pipe(
         take(1),
         switchMap((post: Post) =>
-          this.posts.likePost(post._id, !this.liked).pipe(
+          this.postService.likePost(post._id, !this.liked).pipe(
             tap((liked) => {
               this.likePending = false;
               this.liked = liked;
@@ -99,7 +99,7 @@ export class SinglePostComponent implements OnInit {
       .pipe(
         take(1),
         switchMap((post: Post) =>
-          this.posts.dislikePost(post._id, !this.disliked).pipe(
+          this.postService.dislikePost(post._id, !this.disliked).pipe(
             tap((disliked) => {
               this.likePending = false;
               this.disliked = disliked;
@@ -134,7 +134,7 @@ export class SinglePostComponent implements OnInit {
       this.post$
         .pipe(
           take(1),
-          switchMap((post) => this.posts.deletePost(post._id)),
+          switchMap((post) => this.postService.deletePost(post._id)),
           tap((message) => {
             console.log(message);
             this.loading = false;
