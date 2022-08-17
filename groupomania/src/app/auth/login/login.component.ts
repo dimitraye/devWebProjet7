@@ -16,7 +16,7 @@ export class LoginComponent implements OnInit {
   errorMsg!: string;
 
   constructor(private formBuilder: FormBuilder,
-              private auth: AuthService,
+              private authService: AuthService,
               private router: Router) { }
 
   ngOnInit() {
@@ -30,7 +30,7 @@ export class LoginComponent implements OnInit {
     this.loading = true;
     const email = this.loginForm.get('email')!.value;
     const password = this.loginForm.get('password')!.value;
-    this.auth.loginUser(email, password).pipe(
+    this.authService.loginUser(email, password).pipe(
       tap(() => {
         this.loading = false;
         this.router.navigate(['/posts']);

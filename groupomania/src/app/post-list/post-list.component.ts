@@ -19,13 +19,13 @@ export class PostListComponent implements OnInit {
   isAdmin!: boolean;
   constructor(private post: PostsService,
               private router: Router,
-              private auth: AuthService
+              private authService: AuthService
               ) { }
 
   ngOnInit() {
     this.loading = true;
-    this.userId = this.auth.getUserId();
-    this.isAdmin = this.auth.getLocalUserRole() == 'admin';
+    this.userId = this.authService.getUserId();
+    this.isAdmin = this.authService.getLocalUserRole() == 'admin';
 
     this.posts$ = this.post.posts$.pipe(
       tap(() => {
