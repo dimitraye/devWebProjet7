@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { Post } from '../models/Post.model';
 import { PostsService } from '../services/posts.service';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -23,6 +23,7 @@ import {
 export class SinglePostComponent implements OnInit {
   loading!: boolean;
   post$!: Observable<Post>;
+  @Input() post!: Post;
   userId!: string;
   likePending!: boolean;
   liked!: boolean;
@@ -31,12 +32,15 @@ export class SinglePostComponent implements OnInit {
   isAdmin$!: Observable<Boolean>;
   isAdmin!: boolean;
   role!: string;
-  decodedToken!:{};
+  decodedToken!: {};
+  id!: string;
+  @Input() onListPage!: boolean;
+  @Output() public postDeleted: EventEmitter<any> = new EventEmitter();
   constructor(
     private postService: PostsService,
     private route: ActivatedRoute,
     private authService: AuthService,
-    
+
     private router: Router
   ) {}
 
@@ -45,72 +49,76 @@ export class SinglePostComponent implements OnInit {
     this.userId = this.authService.getUserId();
     this.role = this.authService.getLocalUserRole();
     this.isAdmin = this.authService.getLocalUserRole() == 'admin';
-    let token:string | null = this.authService.getToken();
+    let token: string | null = this.authService.getToken();
     this.decodedToken = this.authService.getDecodedAccessToken(token);
-    console.log('decodedToken',this.decodedToken);
-    this.post$ = this.route.params.pipe(
-      map((params) => params['id']),
-      switchMap((id) => this.postService.getPostById(id)),
-      tap((post) => {
-        this.loading = false;
-        if (post.usersLiked.find((user) => user === this.userId)) {
-          this.liked = true;
-        } else if (post.usersDisliked.find((user) => user === this.userId)) {
-          this.disliked = true;
-        }
-      })
-    );
-    this.isAdmin$ = this.authService.isAdmin$.pipe(shareReplay(1));
-    
+    console.log('decodedToken', this.decodedToken);
+    this.id = this.route.snapshot.params['id'];
 
+    console.log('id---------------------', this.id);
+    if (this.id) {
+      //on est sur la page single post
+      this.postService.getPostById(this.id).subscribe((data: Post) => {
+        this.post = data;
+      });
+    }
+    if (this.post) {
+      //on est sur la page qui liste les posts
+      this.loading = false;
+      if (this.post.usersLiked.find((user) => user === this.userId)) {
+        this.liked = true;
+      } else if (this.post.usersDisliked.find((user) => user === this.userId)) {
+        this.disliked = true;
+      }
+    }
+
+    this.isAdmin$ = this.authService.isAdmin$.pipe(shareReplay(1));
   }
 
-  onLike() {
+  onClickPost(id: string) {
+    console.log('on click post');
+    this.router.navigate(['post', id]);
+  }
+
+  onLike($event:Event) {
+    $event?.stopPropagation();
     if (this.disliked) {
       return;
     }
     this.likePending = true;
-    this.post$
+    this.postService
+      .likePost(this.post._id, !this.liked)
       .pipe(
-        take(1),
-        switchMap((post: Post) =>
-          this.postService.likePost(post._id, !this.liked).pipe(
-            tap((liked) => {
-              this.likePending = false;
-              this.liked = liked;
-            }),
-            map((liked) => ({
-              ...post,
-              likes: liked ? post.likes + 1 : post.likes - 1,
-            })),
-            tap((post) => (this.post$ = of(post)))
-          )
-        )
+        tap((liked) => {
+          this.likePending = false;
+          this.liked = liked;
+        }),
+        map((liked) => ({
+          ...this.post,
+          likes: liked ? this.post.likes + 1 : this.post.likes - 1,
+        })),
+        tap((post) => (this.post = post))
       )
       .subscribe();
   }
-
-  onDislike() {
+  onDislike($event:Event) {
+    $event?.stopPropagation();
     if (this.liked) {
       return;
     }
     this.likePending = true;
-    this.post$
+
+    this.postService
+      .dislikePost(this.post._id, !this.disliked)
       .pipe(
-        take(1),
-        switchMap((post: Post) =>
-          this.postService.dislikePost(post._id, !this.disliked).pipe(
-            tap((disliked) => {
-              this.likePending = false;
-              this.disliked = disliked;
-            }),
-            map((disliked) => ({
-              ...post,
-              dislikes: disliked ? post.dislikes + 1 : post.dislikes - 1,
-            })),
-            tap((post) => (this.post$ = of(post)))
-          )
-        )
+        tap((disliked) => {
+          this.likePending = false;
+          this.disliked = disliked;
+        }),
+        map((disliked) => ({
+          ...this.post,
+          dislikes: disliked ? this.post.dislikes + 1 : this.post.dislikes - 1,
+        })),
+        tap((post) => (this.post = post))
       )
       .subscribe();
   }
@@ -120,38 +128,22 @@ export class SinglePostComponent implements OnInit {
   }
 
   onModify() {
-    this.post$
-      .pipe(
-        take(1),
-        tap((post) => this.router.navigate(['/modify-post', post._id]))
-      )
-      .subscribe();
+    this.router.navigate(['/modify-post', this.post._id]);
   }
 
   onDelete() {
-    if (confirm('Etes-vous sûr de vouloir supprimer ce post ?')) {
-      this.loading = true;
-      this.post$
-        .pipe(
-          take(1),
-          switchMap((post) => this.postService.deletePost(post._id)),
-          tap((message) => {
-            console.log(message);
-            this.loading = false;
-            this.router.navigate(['/posts']);
-          }),
-          catchError((error) => {
-            this.loading = false;
-            this.errorMessage = error.message;
-            console.error(error);
-            return EMPTY;
-          })
-        )
-        .subscribe();
-        console.log('deleted')
-    } else {
-      // Do nothing!
-      console.log('No delete');
+    this.loading = true;
+    if (confirm('Voulez vous vraiment supprimer ce post')) {
+      this.postService.deletePost(this.post._id).subscribe((res) => {
+        if (this.onListPage) {
+          console.log('onListPage');
+          this.postDeleted.emit();
+        } else {
+          this.router.navigate(['/posts']);
+        }
+        console.log('Post deleted successfully!');
+        this.loading = false;
+      });
     }
   }
 }

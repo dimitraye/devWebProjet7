@@ -1,57 +1,15 @@
-<div *ngIf="loading" class="spinner-border" role="status">
-  <span class="visually-hidden">Loading...</span>
-</div>
-<ng-container *ngIf="posts$ | async as posts">
-  <p *ngIf="!loading && posts.length <= 0">Aucun post!</p>
-  <h1 class="list-title" *ngIf="!loading && posts.length > 0">
-    Les derniers posts
-  </h1>
+<span *ngIf="loading"></span>
+<p *ngIf="!loading && posts.length <= 0">No posts to display!</p>
+<h1 class="list-title" *ngIf="!loading && posts.length > 0">
+  Les derniers posts
+</h1>
 
-  <div class="" *ngIf="!loading && posts.length > 0">
-    <div
-      class="card"
-      
-      *ngFor="let post of posts"
-      (click)="onClickPost(post._id)"
-    >
-      <div class="card-header">
-        <h1 class="card-title">{{ post.title | uppercase }}</h1>
-        <p>Rédigé le {{ post.date | date: "dd/MM/yy" }} jours</p>
-        <p class=""></p>
-      </div>
-      <div class="card-body">
-        <p class="card-text">
-          {{
-            post.content.length > 200
-              ? (post.content | slice: 0:200) + "..."
-              : post.content
-          }}
-        </p>
-      </div>
+<div class="" *ngIf="!loading && posts.length > 0"></div>
 
-      <img
-        class="card-img-bottom"
-        [src]="post.imageUrl"
-        alt="image post"
-        
-      />
-
-      <div class="card-footer">
-        <button
-          class="btn btn-primary me-1"
-          (click)="onModify(post._id)"
-          *ngIf="userId === post.userId || isAdmin"
-        >
-          Modifier
-        </button>
-        <!-- <button
-          class="btn btn-danger"
-          (click)="onDelete(post._id)"
-          *ngIf="userId === post.userId || isAdmin"
-        >
-          Supprimer
-        </button> -->
-      </div>
-    </div>
-  </div>
+<ng-container *ngFor="let post of posts">
+  <app-single-post
+    [post]="post"
+    [onListPage]="true"
+    (postDeleted)="onPostDeleted(post)"
+  ></app-single-post>
 </ng-container>
