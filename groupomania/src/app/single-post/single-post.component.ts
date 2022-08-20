@@ -59,10 +59,17 @@ export class SinglePostComponent implements OnInit {
       //on est sur la page single post
       this.postService.getPostById(this.id).subscribe((data: Post) => {
         this.post = data;
+        this.loading = false;
+        if (this.post.usersLiked.find((user) => user === this.userId)) {
+          this.liked = true;
+        } else if (
+          this.post.usersDisliked.find((user) => user === this.userId)
+        ) {
+          this.disliked = true;
+        }
       });
     }
     if (this.post) {
-      //on est sur la page qui liste les posts
       this.loading = false;
       if (this.post.usersLiked.find((user) => user === this.userId)) {
         this.liked = true;
@@ -79,8 +86,8 @@ export class SinglePostComponent implements OnInit {
     this.router.navigate(['post', id]);
   }
 
-  onLike($event:Event) {
-    $event?.stopPropagation();
+  onLike($event: Event) {
+    $event.stopPropagation();
     if (this.disliked) {
       return;
     }
@@ -100,8 +107,8 @@ export class SinglePostComponent implements OnInit {
       )
       .subscribe();
   }
-  onDislike($event:Event) {
-    $event?.stopPropagation();
+  onDislike($event: Event) {
+    $event.stopPropagation();
     if (this.liked) {
       return;
     }

@@ -1,7 +1,7 @@
 <div class="card" (click)="onClickPost(post._id)" *ngIf="post" [ngClass]="{pointer: onListPage}">
   <div class="card-header">
-    <h1 class="card-title">{{ post?.title }}</h1>
-    <p>Rédigé le {{ post?.date | date: "dd/MM/yy" }}</p>
+    <h1 class="card-title">{{ post.title }}</h1>
+    <p>Rédigé le {{ post.date | date: "dd/MM/yy" }}</p>
     <p class=""></p>
 
     <div class="like-buttons" *ngIf="!likePending">
@@ -35,7 +35,7 @@
     <p class="card-text">{{ post.content }}</p>
   </div>
 
-  <img class="card-img-bottom" [src]="post?.imageUrl" alt="image post" />
+  <img class="card-img-bottom" [src]="post.imageUrl" alt="image post" />
 
   <div class="card-footer" *ngIf="!onListPage || (onListPage && (userId === post.userId || (isAdmin$ | async))) ">
     <button class="btn btn-primary me-1" (click)="onBack()" *ngIf="!onListPage">Retour</button>
