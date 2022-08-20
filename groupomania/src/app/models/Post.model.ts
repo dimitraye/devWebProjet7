@@ -9,5 +9,4 @@ export class Post {
   usersLiked!: string[];
   usersDisliked!: string[];
   date!: Date;
-  role!: String;
 }
